@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+<style>
+  #customerId {
+width: 200px;
+margin: 0 auto;
+}
+#contacts-table {
+  width: 200px;
+  margin: 0 auto;
+}
+.ivalid {
+  color: green;
+}
+</style>
+<title>Задание 2</title>
+  </head>
+  <body>
+    <form name="customer" id="customerId">
+
+      <div class="form-group">
+<label for = 'name'>Ваше имя</label>
+        <input class="form-control" id="name" type="text" name="customerName" placeholder="введите имя" rule-required/>
+          </div>
+      <div class="form-group">
+        <label for = 'lastname'>Ваша Фамилия </label>
+        <input class="form-control" id="surname" type="text" placeholder=" введите фамилию" rule-required/>
+        </div>
+      <div class="form-group">
+          <label for = 'number'>Номер телефона</label>
+        <input class="form-control" id="phone" type="number" placeholder="введите номер" rule-required/>
+        </div>
+        <div class="form-group">
+          <button type="button" onclick="addContact()" class="btn btn-default" id="btn">Добавить</button>
+        </div>
+</form>
+<table class="table" id = 'contacts-table'>
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Имя</th>
+      <th scope="col">Фамилия</th>
+      <th scope="col">Телефон</th>
+      <th scopr="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody id = 'tbody'>
+
+  </tbody>
+</table>
+<script>
+var contacts = [];
+var Contact = function(name, surname,phone, code){
+this.name = name;
+this.surname = surname;
+this.phone = phone;
+this.code = code;
+}
+var addContact = function(){
+var nameValue = document.querySelector('#name').value
+var surnameValue = document.querySelector('#surname').value
+var phoneValue = document.querySelector('#phone').value
+var code = Date.now();
+var contact = new Contact(nameValue, surnameValue, phoneValue, code);
+validate();
+if(nameValue && surnameValue && phoneValue){
+const contacts = localStorage.getItem('contacts') ? JSON.parse(localStorage.getItem('contacts')) : [];
+
+
+contacts.push(contact);
+
+/*
+// проверяет, есть ли в локальном хранилище значение по ключу contacts
+// если значение есть, его надо распарсить, т.к. мы храним строковое представление массива
+// если значения нет, надо присвоить переменной пустой массив т.к. мы работаем с переменной contacts как с массивом
+const contacts = localStorage.getItem('contacts') ? JSON.parse(localStorage.getItem('contacts')) : [];
+// добавляем в существующий массив контактов новый контакт
+contacts.push(contact);
+// перезаписываем информацию о контактах актуальным значением
+*/
+localStorage.setItem('contacts',JSON.stringify(contacts));
+for(var i=0; i<contacts.length; i++){
+  var object = contacts[i];
+  var button = document.querySelector('#delBtn')
+  if(!document.getElementById(''+ object.code)){
+  button.setAttribute('id', ''+ object.code)
+
+console.log(button)
+
+
+
+updateTable();
+
+}}}
+}
+
+var updateTable = function(){
+const contacts = localStorage.getItem('contacts') ? JSON.parse(localStorage.getItem('contacts')) : [];
+const tbody = document.querySelector('#contacts-table tbody');
+while (tbody.firstChild){
+  tbody.removeChild(tbody.firstChild);
+}
+for(var i=0; i<contacts.length; i++){
+const {name, surname, phone, code} = contacts[i];
+let tr = document.createElement('tr');
+tr.innerHTML = `<td>${i+1}</td><td>${name}</td><td>${surname}</td><td>${phone}</td><td><button type="button" onclick="deleteContact()" class="btn btn-default" id=delBtn>удалить</button></td>`;
+tbody.appendChild(tr);
+}}
+var validate = function(customerId) {
+var elements = document.querySelectorAll('.form-control');
+for (var i = 0; i < elements.length; i++) {
+var element = elements[i];
+if(element.hasAttribute("rule-required")){
+element.classList.add('invalid');
+ if(!element.value && !document.getElementById("req" + i)){
+  var mass = document.createElement('div');
+  mass.setAttribute("id", "req" + i);
+  mass.classList.add('ivalid');
+  mass.innerHTML = 'Заполните поле';
+  console.log(mass);
+  element.parentNode.appendChild(mass);
+}else if (element.value && document.getElementById('req'+i)){
+  resetMass = document.getElementById('req'+i);
+resetMass.remove();
+}
+ }
+  }
+    }
+var deleteContact = function(){
+
+const contacts = localStorage.getItem('contacts') ? JSON.parse(localStorage.getItem('contacts')) : [];
+for(var i=0; i<contacts.length; i++){
+  var object = contacts[i];
+  var button = document.querySelector('#delBtn')
+  if(!document.getElementById(''+ object.code)){
+  button.setAttribute('id', ''+ object.code)
+
+console.log(button)
+
+
+}}}
+window.onload = updateTable;
+
+
+
+
+
+</script>
+  </body>
+</html>
