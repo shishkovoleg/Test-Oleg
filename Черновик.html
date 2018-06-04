@@ -58,7 +58,7 @@ var Contact = function(name, surname,phone, code){
 this.name = name;
 this.surname = surname;
 this.phone = phone;
-this.code = code;
+this.code = Date.now();
 }
 var addContact = function(){
 var nameValue = document.querySelector('#name').value
@@ -69,8 +69,6 @@ var contact = new Contact(nameValue, surnameValue, phoneValue, code);
 validate();
 if(nameValue && surnameValue && phoneValue){
 const contacts = localStorage.getItem('contacts') ? JSON.parse(localStorage.getItem('contacts')) : [];
-
-
 contacts.push(contact);
 
 /*
@@ -83,19 +81,10 @@ contacts.push(contact);
 // перезаписываем информацию о контактах актуальным значением
 */
 localStorage.setItem('contacts',JSON.stringify(contacts));
-for(var i=0; i<contacts.length; i++){
-  var object = contacts[i];
-  var button = document.querySelector('#delBtn')
-  if(!document.getElementById(''+ object.code)){
-  button.setAttribute('id', ''+ object.code)
-
-console.log(button)
-
-
 
 updateTable();
 
-}}}
+}
 }
 
 var updateTable = function(){
@@ -107,7 +96,8 @@ while (tbody.firstChild){
 for(var i=0; i<contacts.length; i++){
 const {name, surname, phone, code} = contacts[i];
 let tr = document.createElement('tr');
-tr.innerHTML = `<td>${i+1}</td><td>${name}</td><td>${surname}</td><td>${phone}</td><td><button type="button" onclick="deleteContact()" class="btn btn-default" id=delBtn>удалить</button></td>`;
+tr.innerHTML = `<td>${i+1}</td><td>${name}</td><td>${surname}</td><td>${phone}</td>
+                <td><button type="button" onclick="deleteContact(${code})" class="btn btn-default" id="${code}">удалить</button></td>`;
 tbody.appendChild(tr);
 }}
 var validate = function(customerId) {
@@ -130,19 +120,30 @@ resetMass.remove();
  }
   }
     }
-var deleteContact = function(){
 
+var deleteContact = function(btnId){
 const contacts = localStorage.getItem('contacts') ? JSON.parse(localStorage.getItem('contacts')) : [];
-for(var i=0; i<contacts.length; i++){
-  var object = contacts[i];
-  var button = document.querySelector('#delBtn')
-  if(!document.getElementById(''+ object.code)){
-  button.setAttribute('id', ''+ object.code)
+localStorage.setItem('contacts',JSON.stringify(contacts));
 
-console.log(button)
+var newContacts = contacts.filter(function(el){
+  return el.code !== btnId;
+})
+/*
+переписываем значение contacts новым значением newContacts
+*/
+localStorage.setItem('contacts',JSON.stringify(newContacts));
+updateTable();
 
 
-}}}
+console.log(contacts);
+console.log(newContacts);
+
+
+
+
+
+
+}
 window.onload = updateTable;
 
 
@@ -152,3 +153,4 @@ window.onload = updateTable;
 </script>
   </body>
 </html>
+
