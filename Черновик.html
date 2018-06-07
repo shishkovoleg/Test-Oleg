@@ -110,11 +110,15 @@ tr.innerHTML = `<td>${i+1}</td><td>${name}</td><td>${surname}</td><td>${phone}</
 tbody.appendChild(tr);
 }}
 var isValid = function(customerId) {
+  // declare our flag, by default it will be true and will become falsy if we have at least one error
+let valid = true;
 var elements = document.querySelectorAll('.form-control');
 for (var i = 0; i < elements.length; i++) {
 var element = elements[i];
 if(element.hasAttribute("rule-required")){
 element.classList.add('invalid');
+  // we have a validation error
+  valid = false;
  if(!element.value && !document.getElementById("req" + i)){
   var mass = document.createElement('div');
   mass.setAttribute("id", "req" + i);
@@ -128,6 +132,8 @@ resetMass.remove();
 }
  }
   }
+
+  return valid;
     }
 
 var deleteContact = function(btnId){
