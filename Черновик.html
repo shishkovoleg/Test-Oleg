@@ -35,7 +35,11 @@ margin: 0 auto;
         <input class="form-control" id="phone" type="number" placeholder="введите номер" rule-required/>
         </div>
         <div class="form-group">
-          <button type="button" onclick="addContact()" class="btn btn-default" id="btn">Добавить</button>
+            <input class="form-control" id="code" type="text" hidden placeholder="code"/>
+          </div>
+        <div class="form-group">
+          <button type="button" onclick="addContact()" class="btn btn-default" id="btnAdd">Добавить</button>
+          <button type="button" onclick="updateContact(this)" class="btn btn-default" id="btnOk" style="display: none">окай</button>
         </div>
 </form>
 <table class="table" id = 'contacts-table'>
@@ -54,6 +58,10 @@ margin: 0 auto;
 </table>
 <script>
 var contacts = [];
+var nameInput = document.querySelector('#name');
+var surnameInput = document.querySelector('#surname');
+var phoneInput = document.querySelector('#phone');
+var codeInput = document.querySelector('#code');
 var Contact = function(name, surname,phone, code){
 this.name = name;
 this.surname = surname;
@@ -66,8 +74,8 @@ var surnameValue = document.querySelector('#surname').value
 var phoneValue = document.querySelector('#phone').value
 var code = Date.now();
 var contact = new Contact(nameValue, surnameValue, phoneValue, code);
-validate();
-if(nameValue && surnameValue && phoneValue){
+if(isValid()){
+}else if(nameValue && surnameValue && phoneValue){
 const contacts = localStorage.getItem('contacts') ? JSON.parse(localStorage.getItem('contacts')) : [];
 contacts.push(contact);
 
@@ -83,9 +91,9 @@ contacts.push(contact);
 localStorage.setItem('contacts',JSON.stringify(contacts));
 
 updateTable();
+}
+}
 
-}
-}
 
 var updateTable = function(){
 const contacts = localStorage.getItem('contacts') ? JSON.parse(localStorage.getItem('contacts')) : [];
@@ -97,10 +105,11 @@ for(var i=0; i<contacts.length; i++){
 const {name, surname, phone, code} = contacts[i];
 let tr = document.createElement('tr');
 tr.innerHTML = `<td>${i+1}</td><td>${name}</td><td>${surname}</td><td>${phone}</td>
-                <td><button type="button" onclick="deleteContact(${code})" class="btn btn-default" id="${code}">удалить</button></td>`;
+                <td><button type="button" onclick="deleteContact(${code})" class="btn btn-default" id="${code}">удалить</button></td>
+                <td><button type="button" onclick="editContact(${code})" class="btn btn-default">редактировать</button></td>`;
 tbody.appendChild(tr);
 }}
-var validate = function(customerId) {
+var isValid = function(customerId) {
 var elements = document.querySelectorAll('.form-control');
 for (var i = 0; i < elements.length; i++) {
 var element = elements[i];
@@ -133,17 +142,42 @@ var newContacts = contacts.filter(function(el){
 */
 localStorage.setItem('contacts',JSON.stringify(newContacts));
 updateTable();
-
-
 console.log(contacts);
 console.log(newContacts);
-
-
-
-
-
-
 }
+var editContact = function(editID){
+const contacts = localStorage.getItem('contacts') ? JSON.parse(localStorage.getItem('contacts')) : [];
+
+for(var i = 0; i < contacts.length; i++){
+if (contacts[i].code == editID) {
+nameInput.value = contacts[i].name;
+surnameInput.value = contacts[i].surname;
+phoneInput.value = contacts[i].phone;
+codeInput.value = contacts[i].code;
+var btnAdd = document.querySelector('#btnAdd');
+var btnOk = document.querySelector('#btnOk');
+btnOk.style.display = "inline-block";
+btnOk.setAttribute("data-index", i);
+btnAdd.style.display = "none";
+console.log(btnOk)
+}
+  }
+    }
+var updateContact = function(data){
+  const contacts = localStorage.getItem('contacts') ? JSON.parse(localStorage.getItem('contacts')) : [];
+  var index = data.getAttribute('data-index');
+  contacts[index].name = nameInput.value;
+  contacts[index].surname = surnameInput.value;
+  contacts[index].phone = phoneInput.value;
+  localStorage.setItem('contacts', JSON.stringify(contacts));
+  nameInput.value = surnameInput.value = phoneInput.value = codeInput.value = "";
+ updateTable();
+  btnOk.style.display = "none";
+  btnAdd.style.display = "inline-block";
+}
+
+
+
 window.onload = updateTable;
 
 
@@ -153,4 +187,3 @@ window.onload = updateTable;
 </script>
   </body>
 </html>
-
